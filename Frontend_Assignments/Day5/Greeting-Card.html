@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread-like Shapes with Random Colors</title>
+    <script>
+        window.onload = function() {
+            const canvas = document.getElementsByTagName("canvas")[0];
+            const ctx = canvas.getContext('2d');
+
+
+            function getRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+
+            function drawCircle() {
+                const edge = Math.floor(Math.random() * 3);
+                let x, y;
+
+                if (edge === 0) {
+                    x = 0;
+                    y = Math.random() * (canvas.height / 2) + (canvas.height / 2); 
+                } else if (edge === 1) { 
+                    x = canvas.width;
+                    y = Math.random() * (canvas.height / 2) + (canvas.height / 2); 
+                } else { 
+                    x = Math.random() * canvas.width;
+                    y = canvas.height;
+                }
+
+                const radius = Math.random() * 50 + 10;
+                const color = getRandomColor();
+
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+
+            function drawCurvyLine(startX, startY, controlX, controlY, endX, endY) {
+                const color = getRandomColor(); 
+                ctx.beginPath();
+                ctx.moveTo(startX, startY); 
+                
+
+                ctx.quadraticCurveTo(controlX, controlY, endX, endY); 
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3; 
+                ctx.stroke();
+
+
+                addTrianglesAlongCurve(startX, startY, controlX, controlY, endX, endY);
+            }
+
+
+            function addTrianglesAlongCurve(startX, startY, controlX, controlY, endX, endY) {
+                const triangleSize = 10;  
+                const numTriangles = 10; 
+
+                for (let i = 0; i <= numTriangles; i++) {
+                    const t = i / numTriangles;
+                    const point = getPointOnCurve(t, startX, startY, controlX, controlY, endX, endY);
+
+                    drawTriangle(point.x, point.y, triangleSize);
+                }
+            }
+
+            function getPointOnCurve(t, startX, startY, controlX, controlY, endX, endY) {
+                const x = Math.pow(1 - t, 2) * startX + 2 * (1 - t) * t * controlX + Math.pow(t, 2) * endX;
+                const y = Math.pow(1 - t, 2) * startY + 2 * (1 - t) * t * controlY + Math.pow(t, 2) * endY;
+                return { x: x, y: y };
+            }
+
+
+            function drawTriangle(x, y, size) {
+                ctx.beginPath();
+                ctx.moveTo(x, y - size);  // Top point of the triangle
+                ctx.lineTo(x - size, y + size);  // Bottom left point
+                ctx.lineTo(x + size, y + size);  // Bottom right point
+                ctx.closePath();
+                ctx.fillStyle = getRandomColor(); // Random color for each triangle
+                ctx.fill();
+            }
+
+            // Draw 50 circles and thread-like shapes
+            for (let i = 0; i < 50; i++) {
+                drawCircle();  // Draw random circles
+            }
+
+            // Fixed positions for the threads:
+            const startLeftX = 0;
+            const startLeftY = canvas.height / 3;  // Starting a bit above the middle of the left edge
+
+            const startRightX = canvas.width;
+            const startRightY = canvas.height / 3;  // Starting a bit above the middle of the right edge
+
+            // Control points for the left and right threads to make the curves bulge downwards
+            const controlLeftX = canvas.width / 4;  // Fixed control X for left thread
+            const controlLeftY = canvas.height / 3 + 100;  // Bulging downward (fixed control Y)
+
+            const controlRightX = canvas.width - canvas.width / 4;  // Fixed control X for right thread
+            const controlRightY = canvas.height / 3 + 100;  // Bulging downward (fixed control Y)
+
+            // End points (closer to the middle top)
+            const endY = 0;  // Upper edge (y = 0)
+
+            // Left thread: Draw from the left edge to a point near the middle top
+            const endLeftX = canvas.width / 2.5;  // Fixed end point for the left thread, closer to the middle
+
+            // Right thread: Draw from the right edge to a point near the middle top
+            const endRightX = 2 * canvas.width / 3;  // Fixed end point for the right thread, closer to the middle
+
+            // Draw the left thread
+            drawCurvyLine(startLeftX, startLeftY, controlLeftX, controlLeftY, endLeftX, endY);
+
+            // Draw the right thread
+            drawCurvyLine(startRightX, startRightY, controlRightX, controlRightY, endRightX, endY);
+
+            function drawPlateWithHeap(x, y, plateRadius, heapHeight) {
+                const plateColor = getRandomColor();
+                const heapColor = getRandomColor();
+                
+                // Draw the plate (arc)
+                ctx.beginPath();
+                ctx.arc(x, y, plateRadius, 0, Math.PI, false); // Half-circle for the plate
+                ctx.fillStyle = plateColor;
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw the heap on top of the plate
+                const heapBaseWidth = plateRadius * 1.5; // The width of the heap base
+
+                // Draw the cone-like heap (using a triangle)
+                ctx.beginPath();
+                ctx.moveTo(x - heapBaseWidth / 2, y); // Left bottom of the heap
+                ctx.lineTo(x + heapBaseWidth / 2, y); // Right bottom of the heap
+                ctx.lineTo(x, y - heapHeight); // Top of the heap (cone shape)
+                ctx.closePath();
+                ctx.fillStyle = heapColor;
+                ctx.fill();
+                ctx.stroke();
+            }
+
+
+            const plateRadius = 60;
+            const heapHeight = 100;
+            const numberOfPlates = 3;
+
+
+            const heapYPosition = canvas.height / 1.5 + 100;
+
+            for (let i = 0; i < numberOfPlates; i++) {
+                const x = canvas.width / 2 - (numberOfPlates * plateRadius) / 2 + i * plateRadius * 2.5;
+                const y = heapYPosition;  
+
+                drawPlateWithHeap(x, y, plateRadius, heapHeight);
+            }
+            
+            const image = new Image();
+            image.src = './images-7.jpeg'; 
+
+            image.onload = function() {
+
+                ctx.font = "100px 'Brush Script MT', cursive"; 
+                ctx.fillStyle = "purple"; 
+
+                const text = "Happy Holi";
+                const textWidth = ctx.measureText(text).width;
+
+
+                const textX = (canvas.width - textWidth) / 2;
+                const textY = canvas.height / 3;
+
+
+                ctx.fillText(text, textX, textY);
+
+
+                const imageWidth = image.width / 2; 
+                const imageHeight = image.height / 2; 
+
+                const imgX = (canvas.width - imageWidth) / 2; 
+                const imgY = textY + 50; 
+
+
+                ctx.drawImage(image, imgX, imgY, imageWidth, imageHeight);
+            };
+        }
+    </script>
+</head>
+<body>
+    <canvas height="700" width="700"></canvas>
+</body>
+</html>
