@@ -82,67 +82,64 @@
 
             function drawTriangle(x, y, size) {
                 ctx.beginPath();
-                ctx.moveTo(x, y - size);  // Top point of the triangle
-                ctx.lineTo(x - size, y + size);  // Bottom left point
-                ctx.lineTo(x + size, y + size);  // Bottom right point
+                ctx.moveTo(x, y - size);  
+                ctx.lineTo(x - size, y + size);  
+                ctx.lineTo(x + size, y + size); 
                 ctx.closePath();
-                ctx.fillStyle = getRandomColor(); // Random color for each triangle
+                ctx.fillStyle = getRandomColor(); 
                 ctx.fill();
             }
 
-            // Draw 50 circles and thread-like shapes
+
             for (let i = 0; i < 50; i++) {
-                drawCircle();  // Draw random circles
+                drawCircle(); 
             }
 
-            // Fixed positions for the threads:
+
             const startLeftX = 0;
-            const startLeftY = canvas.height / 3;  // Starting a bit above the middle of the left edge
+            const startLeftY = canvas.height / 3; 
 
             const startRightX = canvas.width;
-            const startRightY = canvas.height / 3;  // Starting a bit above the middle of the right edge
+            const startRightY = canvas.height / 3; 
 
-            // Control points for the left and right threads to make the curves bulge downwards
-            const controlLeftX = canvas.width / 4;  // Fixed control X for left thread
-            const controlLeftY = canvas.height / 3 + 100;  // Bulging downward (fixed control Y)
 
-            const controlRightX = canvas.width - canvas.width / 4;  // Fixed control X for right thread
-            const controlRightY = canvas.height / 3 + 100;  // Bulging downward (fixed control Y)
+            const controlLeftX = canvas.width / 4;  
+            const controlLeftY = canvas.height / 3 + 100;  
 
-            // End points (closer to the middle top)
-            const endY = 0;  // Upper edge (y = 0)
+            const controlRightX = canvas.width - canvas.width / 4;
+            const controlRightY = canvas.height / 3 + 100; 
 
-            // Left thread: Draw from the left edge to a point near the middle top
-            const endLeftX = canvas.width / 2.5;  // Fixed end point for the left thread, closer to the middle
 
-            // Right thread: Draw from the right edge to a point near the middle top
-            const endRightX = 2 * canvas.width / 3;  // Fixed end point for the right thread, closer to the middle
+            const endY = 0;  
 
-            // Draw the left thread
+            const endLeftX = canvas.width / 2.5;  
+
+
+            const endRightX = 2 * canvas.width / 3;  
+
+
             drawCurvyLine(startLeftX, startLeftY, controlLeftX, controlLeftY, endLeftX, endY);
 
-            // Draw the right thread
+
             drawCurvyLine(startRightX, startRightY, controlRightX, controlRightY, endRightX, endY);
 
             function drawPlateWithHeap(x, y, plateRadius, heapHeight) {
                 const plateColor = getRandomColor();
                 const heapColor = getRandomColor();
-                
-                // Draw the plate (arc)
+
                 ctx.beginPath();
-                ctx.arc(x, y, plateRadius, 0, Math.PI, false); // Half-circle for the plate
+                ctx.arc(x, y, plateRadius, 0, Math.PI, false); 
                 ctx.fillStyle = plateColor;
                 ctx.fill();
                 ctx.stroke();
 
-                // Draw the heap on top of the plate
-                const heapBaseWidth = plateRadius * 1.5; // The width of the heap base
 
-                // Draw the cone-like heap (using a triangle)
+                const heapBaseWidth = plateRadius * 1.5; 
+
                 ctx.beginPath();
-                ctx.moveTo(x - heapBaseWidth / 2, y); // Left bottom of the heap
-                ctx.lineTo(x + heapBaseWidth / 2, y); // Right bottom of the heap
-                ctx.lineTo(x, y - heapHeight); // Top of the heap (cone shape)
+                ctx.moveTo(x - heapBaseWidth / 2, y); 
+                ctx.lineTo(x + heapBaseWidth / 2, y); 
+                ctx.lineTo(x, y - heapHeight); 
                 ctx.closePath();
                 ctx.fillStyle = heapColor;
                 ctx.fill();
